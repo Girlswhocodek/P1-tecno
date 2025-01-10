@@ -141,7 +141,7 @@ public class DDetalleOrden {
     }
 public double getPrecioProducto(int id) throws SQLException {
         double precio = 0.0;
-        String query = "SELECT p.precio FROM productos p INNER JOIN detalle_ordens d ON p.id = d.producto_id WHERE d.producto_id = ?";
+        String query = "SELECT p.precio FROM productos p WHERE p.id = ?";
         PreparedStatement ps = connection.connect().prepareStatement(query);
         ps.setInt(1, id);
 

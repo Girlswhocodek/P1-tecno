@@ -11,9 +11,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class DUsuario {
-    public static final String[] HEADERS = { "Id","name", "email", "rol" };
+    public static final String[] HEADERS = { "ID","NAME", "EMAIL", "ROL" };
 
     private final DBConeccion connection;
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -40,12 +41,15 @@ public class DUsuario {
 
     // Guardar un nuevo usuario junto con su rol
     public void guardar(String name, String email, String password, String rol) throws SQLException {
+        
+        String encryptedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         String query = "INSERT INTO users (name, email, password, created_at, updated_at) "
                 + "VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
+
         try (PreparedStatement ps = connection.connect().prepareStatement(query)) {
             ps.setString(1, name.toUpperCase());
             ps.setString(2, email);
-            ps.setString(3, password);
+            ps.setString(3, encryptedPassword);
 
             int result = ps.executeUpdate();
 
@@ -85,11 +89,11 @@ public class DUsuario {
     // Modificar usuario y su rol
     public void modificar(long id, String name, String email, String password, String rol) throws SQLException {
     String query = "UPDATE users SET name=?, email=?, password=? WHERE id=?";
-
+    String encryptedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
     try (PreparedStatement ps = connection.connect().prepareStatement(query)) {
         ps.setString(1, name.toUpperCase());
         ps.setString(2, email);
-        ps.setString(3, password);
+        ps.setString(3, encryptedPassword);
         ps.setLong(4, id);
 
         int rowsAffected = ps.executeUpdate();
@@ -147,7 +151,7 @@ public class DUsuario {
         try (PreparedStatement ps = connection.connect().prepareStatement(query)) {
             ps.setInt(1, id);
 
-            if (ps.executeUpdate() == 0) {
+            if (ps.executeUpdate() != 0) {
                 throw new SQLException("Error al eliminar usuario");
             }
         }
@@ -210,11 +214,11 @@ public class DUsuario {
         try (PreparedStatement ps = connection.connect().prepareStatement(query)) {
             ps.setString(1, email);
 
-            try (ResultSet set = ps.executeQuery()) {
+         ResultSet set = ps.executeQuery();
                 if (set.next()) {
                     id = set.getInt("id");
                 }
-            }
+            
         } catch (SQLException e) {
             throw new SQLException("Error al obtener ID por email", e);
         }

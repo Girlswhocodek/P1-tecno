@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class DCliente {
     public static final String[] HEADERS
@@ -28,6 +29,7 @@ public class DCliente {
             String sexo,
             String cedula_nit) throws SQLException, ParseException {
 
+          String encryptedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         // Insertar o actualizar el usuario con el rol cliente
         String query = "INSERT INTO users (name, email, password, direccion, telefono, sexo, ci_nit, created_at, updated_at) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) "
@@ -37,7 +39,7 @@ public class DCliente {
         try (PreparedStatement ps = connection.connect().prepareStatement(query)) {
             ps.setString(1, nombre.toUpperCase());
             ps.setString(2, email);
-            ps.setString(3, password); // Aquí puedes manejar el password según tu lógica
+            ps.setString(3, encryptedPassword); // Aquí puedes manejar el password según tu lógica
             ps.setString(4, direccion);
             ps.setString(5, telefono);
             ps.setString(6, sexo);
@@ -100,8 +102,8 @@ public class DCliente {
             ps.setInt(1, id);
 
             int result = ps.executeUpdate();
-            if (result == 0) {
-                throw new SQLException("Error al eliminar usuario");
+            if (result != 0) {
+                throw new SQLException("Error al eliminar cliente");
             }
         } catch (SQLException e) {
             System.err.println("Error al eliminar cliente: " + e.getMessage());
@@ -213,11 +215,11 @@ public class DCliente {
         try (PreparedStatement ps = connection.connect().prepareStatement(query)) {
             ps.setString(1, email);
 
-            try (ResultSet set = ps.executeQuery()) {
+            ResultSet set = ps.executeQuery();
                 if (set.next()) {
                     id = set.getInt("id");
                 }
-            }
+            
         } catch (SQLException e) {
             System.err.println("Error al obtener ID por email: " + e.getMessage());
             throw e;
