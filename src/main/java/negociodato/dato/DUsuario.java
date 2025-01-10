@@ -40,9 +40,9 @@ public class DUsuario {
     }
 
     // Guardar un nuevo usuario junto con su rol
-    public void guardar(String name, String email, String password, String rol) throws SQLException {
+    public void guardar(String name, String email, String rol) throws SQLException {
         
-        String encryptedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        String encryptedPassword = "$2y$12$k9x7sPmuCFNHnEUdMFijP.0.hbGPsLPNmAoYxxPTcAeugaIvwLp/y";
         String query = "INSERT INTO users (name, email, password, created_at, updated_at) "
                 + "VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
 
@@ -87,9 +87,9 @@ public class DUsuario {
     }
 
     // Modificar usuario y su rol
-    public void modificar(long id, String name, String email, String password, String rol) throws SQLException {
+    public void modificar(long id, String name, String email, String rol) throws SQLException {
     String query = "UPDATE users SET name=?, email=?, password=? WHERE id=?";
-    String encryptedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+    String encryptedPassword = "$2y$12$k9x7sPmuCFNHnEUdMFijP.0.hbGPsLPNmAoYxxPTcAeugaIvwLp/y";
     try (PreparedStatement ps = connection.connect().prepareStatement(query)) {
         ps.setString(1, name.toUpperCase());
         ps.setString(2, email);

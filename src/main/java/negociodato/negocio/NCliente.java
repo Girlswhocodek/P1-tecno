@@ -35,11 +35,10 @@ public class NCliente {
                 dCliente.guardar(
                         parametros.get(0), //name
                         parametros.get(1),  // email
-                        parametros.get(2),  // password
-                        parametros.get(3),  // direccion
-                        parametros.get(4),  // telefono
-                        parametros.get(5),  // sexo
-                        parametros.get(6)   // ci_nit 
+                        parametros.get(2),  // direccion
+                        parametros.get(3),  // telefono
+                        parametros.get(4),  // sexo
+                        parametros.get(5)   // ci_nit 
                 );
                 System.out.println("Cliente guardado correctamente.");
             } catch (ParseException ex) {

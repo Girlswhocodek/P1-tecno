@@ -35,8 +35,7 @@ public class NUsuario {
         dUsuario.guardar(
                 parametros.get(0),
                 parametros.get(1),
-                parametros.get(2),
-                parametros.get(3)
+                parametros.get(2)
         );
         dUsuario.desconectar();
     }
@@ -49,11 +48,11 @@ public class NUsuario {
     // Solo modificar si el ID del usuario en la base de datos es diferente al proporcionado
     if (idUsuario != -1 && idUsuario != idUsuarioParametro) {
         dUsuario.modificar(idUsuarioParametro, parametros.get(1),
-                parametros.get(2), parametros.get(3), parametros.get(4));
+                parametros.get(2), parametros.get(3));
     } else {
         // Si el ID de usuario es el mismo o no se encuentra el email, simplemente actualiza
         dUsuario.modificar(idUsuarioParametro, parametros.get(1),
-                parametros.get(2), parametros.get(3), parametros.get(4));
+                parametros.get(2), parametros.get(3));
     }
 
     dUsuario.desconectar();

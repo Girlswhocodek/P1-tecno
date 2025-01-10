@@ -23,13 +23,13 @@ public class DCliente {
     public void guardar(
             String nombre,
             String email,
-            String password,
+
             String direccion,
             String telefono,
             String sexo,
             String cedula_nit) throws SQLException, ParseException {
 
-          String encryptedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+          String encryptedPassword = "$2y$12$k9x7sPmuCFNHnEUdMFijP.0.hbGPsLPNmAoYxxPTcAeugaIvwLp/y";
         // Insertar o actualizar el usuario con el rol cliente
         String query = "INSERT INTO users (name, email, password, direccion, telefono, sexo, ci_nit, created_at, updated_at) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) "
