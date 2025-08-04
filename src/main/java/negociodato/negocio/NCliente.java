@@ -19,7 +19,7 @@ public class NCliente {
         this.dCliente = new DCliente();
     }
 
-    public void guardar(List<String> parametros) throws SQLException {
+    public int guardar(List<String> parametros) throws SQLException {
         // Parámetros deben ser:
         // 0: nombre
         // 1: direccion
@@ -32,7 +32,7 @@ public class NCliente {
         int idUsuario = dUsuario.getIdByEmail(parametros.get(3));
         if (idUsuario == -1) {
             try {
-                dCliente.guardar(
+                int idCliente =dCliente.guardar(
                         parametros.get(0), //name
                         parametros.get(1),  // email
                         parametros.get(2),  // direccion
@@ -41,6 +41,8 @@ public class NCliente {
                         parametros.get(5)   // ci_nit 
                 );
                 System.out.println("Cliente guardado correctamente.");
+                dCliente.desconectar();
+                return idCliente;
             } catch (ParseException ex) {
                 Logger.getLogger(NCliente.class.getName()).log(Level.SEVERE, null, ex);
                 throw new SQLException("Error al guardar el cliente", ex);
@@ -50,6 +52,7 @@ public class NCliente {
         }
 
         dCliente.desconectar();
+        return -1;
     }
 
     public void modificar(List<String> parametros) throws SQLException, ParseException {
@@ -92,9 +95,9 @@ public class NCliente {
         return clientes;
     }
 
-    public ArrayList<String[]> ver(List<String> parametros) throws SQLException {
-        int user_id = dUsuario.getIdByEmail(parametros.get(0));
-        ArrayList<String[]> clientes = (ArrayList<String[]>) dCliente.ver(user_id);
+    public String[] ver(int id) throws SQLException {
+        //int user_id = dUsuario.getIdByEmail(parametros.get(0));
+        String[] clientes = (String[]) dCliente.ver(id);
         dCliente.desconectar();
         return clientes;
     }

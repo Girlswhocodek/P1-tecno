@@ -14,7 +14,7 @@ import java.util.List;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class DUsuario {
-    public static final String[] HEADERS = { "ID","NAME", "EMAIL", "ROL" };
+    public static final String[] HEADERS = { "ID","NAME", "EMAIL", "ROL", "PASSWORD"};
 
     private final DBConeccion connection;
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -40,13 +40,14 @@ public class DUsuario {
     }
 
     // Guardar un nuevo usuario junto con su rol
-    public void guardar(String name, String email, String rol) throws SQLException {
+    public int guardar(String name, String email,String rol) throws SQLException {
         
         String encryptedPassword = "$2y$12$k9x7sPmuCFNHnEUdMFijP.0.hbGPsLPNmAoYxxPTcAeugaIvwLp/y";
         String query = "INSERT INTO users (name, email, password, created_at, updated_at) "
                 + "VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
 
-        try (PreparedStatement ps = connection.connect().prepareStatement(query)) {
+        try (PreparedStatement ps = connection.connect().prepareStatement(query)) 
+        {
             ps.setString(1, name.toUpperCase());
             ps.setString(2, email);
             ps.setString(3, encryptedPassword);
@@ -59,6 +60,7 @@ public class DUsuario {
 
             // Asignar el rol al usuario recién creado
             asignarRol(email, rol);
+            return getIdByEmail(email);
 
         } catch (SQLException e) {
             System.err.println("Error al insertar usuario: " + e.getMessage()+ "recuerde que solo se aceptan numeros en el campo password");
@@ -87,22 +89,22 @@ public class DUsuario {
     }
 
     // Modificar usuario y su rol
-    public void modificar(long id, String name, String email, String rol) throws SQLException {
-    String query = "UPDATE users SET name=?, email=?, password=? WHERE id=?";
-    String encryptedPassword = "$2y$12$k9x7sPmuCFNHnEUdMFijP.0.hbGPsLPNmAoYxxPTcAeugaIvwLp/y";
+    public String[] modificar(int id, String name, String email) throws SQLException {
+    String query = "UPDATE users SET name=?, email=? WHERE id=?";
+   //String encryptedPassword = "$2y$12$k9x7sPmuCFNHnEUdMFijP.0.hbGPsLPNmAoYxxPTcAeugaIvwLp/y";
     try (PreparedStatement ps = connection.connect().prepareStatement(query)) {
         ps.setString(1, name.toUpperCase());
         ps.setString(2, email);
-        ps.setString(3, encryptedPassword);
-        ps.setLong(4, id);
+        //ps.setString(3, encryptedPassword);
+        ps.setLong(3, id);
 
         int rowsAffected = ps.executeUpdate();
         if (rowsAffected == 0) {
             throw new SQLException("Error al modificar usuario: No se encontraron filas para actualizar");
         }
-
+        return  ver(id);
         // Modificar el rol asignado
-        modificarRol(id, rol);
+       // modificarRol(id, rol);
 
     } catch (SQLException e) {
         System.err.println("Error al modificar usuario: " + e.getMessage());
@@ -183,6 +185,7 @@ public class DUsuario {
     // Obtener usuario por ID
     public String[] ver(int id) throws SQLException {
         String[] usuario = null;
+         List<String> usuarioList = new ArrayList<>();
         String query = "SELECT users.id, users.name, users.email, roles.name AS role "
                 + "FROM users "
                 + "LEFT JOIN model_has_roles ON users.id = model_has_roles.model_id "
@@ -194,15 +197,16 @@ public class DUsuario {
 
             try (ResultSet set = ps.executeQuery()) {
                 if (set.next()) {
-                    usuario = new String[]{
-                            String.valueOf(set.getInt("id")),
-                            set.getString("name"),
-                            set.getString("email"),
-                            set.getString("role")
-                    };
+
+                                    usuarioList.add(String.valueOf(set.getInt("id")));
+                                    usuarioList.add(set.getString("name"));
+                                    usuarioList.add(set.getString("email"));
+                                    usuarioList.add(set.getString("role"));
+                                    usuarioList.add("1234567890");
                 }
             }
         }
+        usuario= usuarioList.toArray(new String[0]);
         return usuario;
     }
 

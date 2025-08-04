@@ -23,11 +23,14 @@ import negociodato.negocio.NUsuario;
 
 import interpreter.analex.Interpreter;
 import interpreter.analex.utils.Token;
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.mail.internet.MimeUtility;
 
 import negociodato.dato.*;
 import negociodato.negocio.*;
@@ -78,16 +81,29 @@ public class Aplication implements IEmailEventListener, ITokenEventListener {
         thread.start();
         
     }
-
+ public static String decodeHeader(String header) {
+    try {
+        return MimeUtility.decodeText(header);
+    } catch (UnsupportedEncodingException e) {
+        return header; // fallback si falla
+    }
+    }
     @Override
+   
     public void onReceiveEmailEvent(List<Email> emails) {
         for (Email email : emails) {
-            String subject = email.getSubject() + " ";
-            Interpreter interpreter = new Interpreter(subject, email.getFrom());
-            interpreter.setListener(Aplication.this);
-            Thread thread = new Thread(interpreter);
-            thread.setName("Interpreter Thread");
-            thread.start();
+           // try {
+                
+                String rawSubject  = email.getSubject() + " ";
+                    String subject =decodeHeader(rawSubject);
+                Interpreter interpreter = new Interpreter(subject, email.getFrom());
+                interpreter.setListener(Aplication.this);
+                Thread thread = new Thread(interpreter);
+                thread.setName("Interpreter Thread");
+                thread.start();
+           // } catch (UnsupportedEncodingException ex) {
+            //    Logger.getLogger(Aplication.class.getName()).log(Level.SEVERE, null, ex);
+           // }
         }
     }
 
@@ -112,14 +128,14 @@ public class Aplication implements IEmailEventListener, ITokenEventListener {
         try {
             switch (event.getAction()) {
                 case Token.AGREGAR:
-                    nUsuario.guardar(event.getParams());
-                    System.out.println("Guardado con exito");
-                    simpleNotifySuccess(event.getSender(), "Usuario de  Guardado Correctamente");
+                    int idUser =nUsuario.guardar(event.getParams());
+                    System.out.println("Guardado con exito :"+ Arrays.toString(nUsuario.ver(idUser)));
+                    simpleTableNotifySuccess(event.getSender(), "Usuario Guardado Correctamente", DUsuario.HEADERS, nUsuario.ver(idUser));
                     break;
                 case Token.MODIFICAR:
-                    nUsuario.modificar(event.getParams());
+                    String[]user  = nUsuario.modificar(event.getParams());
                     System.out.println("Usuario de  modificado con exito");
-                    simpleNotifySuccess(event.getSender(), "Usuario  Modificado Correctamente");
+                    simpleTableNotifySuccess(event.getSender(), "Usuario  Modificado Correctamente", DUsuario.HEADERS, user );
                     break;
                 case Token.ELIMINAR:
                     nUsuario.eliminar(event.getParams());
@@ -273,9 +289,9 @@ public class Aplication implements IEmailEventListener, ITokenEventListener {
         try {
             switch (event.getAction()) {
                 case Token.AGREGAR:
-                    nCliente.guardar(event.getParams());
+                    int idCliente=nCliente.guardar(event.getParams());
                     System.out.println("Guardado con exito");
-                    simpleNotifySuccess(event.getSender(), "Cliente  Guardado Correctamente");
+                    simpleTableNotifySuccess(event.getSender(), "Cliente  Guardado Correctamente", DCliente.HEADERS, nCliente.ver(idCliente));
                     break;
               case Token.MODIFICAR:
                     nCliente.modificar(event.getParams());

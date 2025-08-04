@@ -71,7 +71,14 @@ public class Analex {
     public String lexeme(){
         return ac;
     }
-    
+    private boolean isCharWithAcent(char c){
+        return ('A' == c  || 'á' == c || 
+                'É' == c || 'é' == c || 
+                'Í' == c || 'í' == c || 
+                'Ó' == c || 'ó' == c || 
+                'Ú' == c || 'ú' == c 
+                );
+    }
     private boolean isSpace(char c){
         return (c == SPACE || c == TAB || c == NL);
     }
@@ -82,7 +89,13 @@ public class Analex {
 
     private boolean isLetter(char c){
         return (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z') || '#' == c ||
-            '*' == c  );
+            '*' == c  ||
+                'A' == c  || 'á' == c || 
+                'É' == c || 'é' == c || 
+                'Í' == c || 'í' == c || 
+                'Ó' == c || 'ó' == c || 
+                'Ú' == c || 'ú' == c 
+                );
     }
     
     private boolean isBeginParams(char c){

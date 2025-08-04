@@ -27,35 +27,40 @@ public class NUsuario {
         }
 
     }
+    
+    public void getUsserById(String email) throws SQLException {
+        if (email.isEmpty()) {
+            throw new SQLException("Parametros vacios!");
+        }
 
-    public void guardar(List<String> parametros) throws SQLException {
+    }
+
+    public int guardar(List<String> parametros) throws SQLException {
         if (parametros.isEmpty()) {
             throw new SQLException("Parametros vacios!");
         }
-        dUsuario.guardar(
+        int IdNewUser=dUsuario.guardar(
                 parametros.get(0),
                 parametros.get(1),
                 parametros.get(2)
         );
         dUsuario.desconectar();
+        return  IdNewUser;
     }
 
- public void modificar(List<String> parametros) throws SQLException, ParseException {
+ public String[] modificar(List<String> parametros) throws SQLException, ParseException {
     // Verificar que el email proporcionado sea único
-    int idUsuario = dUsuario.getIdByEmail(parametros.get(2)); // Cambiar el índice según el email
+    //int idUsuario = dUsuario.getIdByEmail(parametros.get(2)); // Cambiar el índice según el email
     int idUsuarioParametro = Integer.parseInt(parametros.get(0)); // ID del usuario
 
-    // Solo modificar si el ID del usuario en la base de datos es diferente al proporcionado
-    if (idUsuario != -1 && idUsuario != idUsuarioParametro) {
-        dUsuario.modificar(idUsuarioParametro, parametros.get(1),
-                parametros.get(2), parametros.get(3));
-    } else {
+
         // Si el ID de usuario es el mismo o no se encuentra el email, simplemente actualiza
-        dUsuario.modificar(idUsuarioParametro, parametros.get(1),
-                parametros.get(2), parametros.get(3));
-    }
+       String[] User= dUsuario.modificar(idUsuarioParametro, parametros.get(1),
+                parametros.get(2));
+    
 
     dUsuario.desconectar();
+    return User;
 }
 
     public void eliminar(List<String> parametros) throws SQLException {
@@ -63,6 +68,15 @@ public class NUsuario {
         dUsuario.desconectar();
     }
 
+     public String[] ver(int idUser) throws SQLException {
+        String[] usuario = (String[]) dUsuario.ver(idUser);
+        dUsuario.desconectar();
+        return usuario;
+    }
+
+    public NUsuario(DUsuario dUsuario) {
+        this.dUsuario = dUsuario;
+    }
     public ArrayList<String[]> listar() throws SQLException {
         ArrayList<String[]> usuarios = (ArrayList<String[]>) dUsuario.listar();
         dUsuario.desconectar();

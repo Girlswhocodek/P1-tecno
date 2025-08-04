@@ -11,7 +11,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 public class DCliente {
     public static final String[] HEADERS
-            = {"ID", "NOMBRE", "DIRECCION", "EMAIL", "TELEFONO", "SEXO", "CEDULA", "ROL"};
+            = {"ID", "NOMBRE", "DIRECCION", "EMAIL", "TELEFONO", "SEXO", "CEDULA", "ROL","PASSWORD"};
 
     private final DBConeccion connection;
 
@@ -20,7 +20,7 @@ public class DCliente {
     }
 
     // Guardar un cliente
-    public void guardar(
+    public int guardar(
             String nombre,
             String email,
 
@@ -52,6 +52,7 @@ public class DCliente {
 
             // Asignar el rol de cliente
             asignarRol(email, "cliente");
+            return getIdByEmail(email);
         } catch (SQLException e) {
             System.err.println("Error al guardar cliente: " + e.getMessage());
             throw e;
@@ -177,8 +178,9 @@ public class DCliente {
     }
 
     // Ver datos del cliente por ID
-    public List<String[]> ver(int id) throws SQLException {
-        List<String[]> clientes = new ArrayList<>();
+    public String[] ver(int id) throws SQLException {
+        String[] clientes = null;
+        List<String> clientesList = new ArrayList<>();
         String query = "SELECT users.id, users.name, users.direccion, users.email, users.telefono, users.sexo, users.ci_nit, roles.name AS role "
                 + "FROM users "
                 + "LEFT JOIN model_has_roles ON users.id = model_has_roles.model_id "
@@ -190,21 +192,22 @@ public class DCliente {
 
             try (ResultSet set = ps.executeQuery()) {
                 if (set.next()) {
-                    clientes.add(new String[]{
-                            String.valueOf(set.getInt("id")),
-                            set.getString("name"),
-                            set.getString("direccion"),
-                            set.getString("email"),
-                            set.getString("telefono"),
-                            set.getString("sexo"),
-                            set.getString("ci_nit")
-                    });
-                }
+                    clientesList.add(String.valueOf(set.getInt("id")));
+                            clientesList.add(set.getString("name"));
+                            clientesList.add(set.getString("direccion"));
+                            clientesList.add(set.getString("email"));
+                            clientesList.add(set.getString("telefono"));
+                            clientesList.add(set.getString("sexo"));
+                            clientesList.add(set.getString("ci_nit"));
+                            clientesList.add("1234567890");
+                    }
+                
             }
         } catch (SQLException e) {
             System.err.println("Error al obtener datos del cliente: " + e.getMessage());
             throw e;
         }
+        clientes= clientesList.toArray(new String[0]);
         return clientes;
     }
 

@@ -182,7 +182,7 @@ public class HtmlBuilder {
             + "                <img src=\"https://res.cloudinary.com/drjvgyusx/image/upload/v1720578579/logo_jojjjr.jpg\" width=\"60px\">\n"
             + "            <h5>   ABASTOCRUZ:</h5>\n"
             + "            </div>\n"
-            + "            <p>&copy; Derechos Reservados Grupo18SA 2024 - TecnologiaWeb</p>\n"
+            + "            <p>&copy; Derechos Reservados Grupo18SA 2025 - TecnologiaWeb</p>\n"
             + "        </div>\n"
             + "    </footer>";
 }
