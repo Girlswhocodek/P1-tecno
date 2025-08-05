@@ -290,7 +290,7 @@ public class Aplication implements IEmailEventListener, ITokenEventListener {
             switch (event.getAction()) {
                 case Token.AGREGAR:
                     int idCliente=nCliente.guardar(event.getParams());
-                    System.out.println("Guardado con exito");
+                    System.out.println("Guardado con exito :"+ Arrays.toString(nUsuario.ver(idCliente)));
                     simpleTableNotifySuccess(event.getSender(), "Cliente  Guardado Correctamente", DCliente.HEADERS, nCliente.ver(idCliente));
                     break;
               case Token.MODIFICAR:

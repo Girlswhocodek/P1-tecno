@@ -77,15 +77,16 @@ public class NCliente {
     }
 
     public void eliminar(List<String> parametros) throws SQLException {
-        int user_id = dUsuario.getIdByEmail(parametros.get(0));
-        if (user_id != -1) {
+        dCliente.eliminar(Integer.parseInt(parametros.get(0)));
+        /*int user_id = dUsuario.getIdByEmail(parametros.get(0));*/
+        /*if (user_id != -1) {
             dCliente.eliminar(user_id);
             dUsuario.eliminar(user_id);
         } else {
             System.out.println("El usuario con el email proporcionado no existe.");
         }
 
-        dUsuario.desconectar();
+        dUsuario.desconectar();*/
         dCliente.desconectar();
     }
 

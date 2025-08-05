@@ -103,7 +103,7 @@ public class DCliente {
             ps.setInt(1, id);
 
             int result = ps.executeUpdate();
-            if (result != 0) {
+            if (result == 0) {
                 throw new SQLException("Error al eliminar cliente");
             }
         } catch (SQLException e) {
@@ -199,6 +199,7 @@ public class DCliente {
                             clientesList.add(set.getString("telefono"));
                             clientesList.add(set.getString("sexo"));
                             clientesList.add(set.getString("ci_nit"));
+                            clientesList.add(set.getString("role"));
                             clientesList.add("1234567890");
                     }
                 
